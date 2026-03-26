@@ -1,0 +1,109 @@
+services:
+  - type: web
+    name: gan-zoo-api
+    runtime: docker
+    plan: starter
+    dockerContext: .
+    dockerfilePath: ./backend/Dockerfile
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: PROJECT_NAME
+        value: GAN Studio
+      - key: ENVIRONMENT
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: gan-zoo-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: gan-zoo-redis
+          type: keyvalue
+          property: connectionString
+      - key: BROKER_URL
+        fromService:
+          name: gan-zoo-redis
+          type: keyvalue
+          property: connectionString
+      - key: RESULT_BACKEND
+        fromService:
+          name: gan-zoo-redis
+          type: keyvalue
+          property: connectionString
+      - key: DEFAULT_DEVICE
+        value: cpu
+      - key: FRONTEND_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: AWS_S3_ENABLED
+        value: "false"
+      - key: AWS_S3_BUCKET
+        sync: false
+      - key: AWS_REGION
+        value: us-east-1
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+
+  - type: worker
+    name: gan-zoo-worker
+    runtime: docker
+    plan: starter
+    dockerContext: .
+    dockerfilePath: ./backend/Dockerfile
+    dockerCommand: celery -A backend.celery_worker.celery_app worker --loglevel=info
+    autoDeploy: true
+    envVars:
+      - key: PROJECT_NAME
+        value: GAN Studio
+      - key: ENVIRONMENT
+        value: production
+      - key: SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: gan-zoo-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: gan-zoo-redis
+          type: keyvalue
+          property: connectionString
+      - key: BROKER_URL
+        fromService:
+          name: gan-zoo-redis
+          type: keyvalue
+          property: connectionString
+      - key: RESULT_BACKEND
+        fromService:
+          name: gan-zoo-redis
+          type: keyvalue
+          property: connectionString
+      - key: DEFAULT_DEVICE
+        value: cpu
+      - key: AWS_S3_ENABLED
+        value: "false"
+      - key: AWS_S3_BUCKET
+        sync: false
+      - key: AWS_REGION
+        value: us-east-1
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+
+  - type: keyvalue
+    name: gan-zoo-redis
+    plan: starter
+    ipAllowList: []
+
+databases:
+  - name: gan-zoo-db
+    databaseName: gan_studio
+    user: gan_studio
+    plan: free
