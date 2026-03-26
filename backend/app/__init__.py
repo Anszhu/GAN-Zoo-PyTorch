@@ -1,2 +1,0 @@
-"""GAN Studio backend package."""
-
