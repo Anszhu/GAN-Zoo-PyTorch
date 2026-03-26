@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(213, 93, 63, 0.14), transparent 28%),
+    radial-gradient(circle at top right, rgba(109, 139, 116, 0.16), transparent 32%),
+    #faf5ef;
+  color: #111111;
+}
+
+.panel {
+  @apply rounded-3xl border border-black/10 bg-white/85 p-6 shadow-card backdrop-blur;
+}
+
+.button-primary {
+  @apply rounded-full bg-ink px-5 py-3 text-sm font-semibold text-cream transition hover:bg-ember;
+}
+
+.button-secondary {
+  @apply rounded-full border border-black/15 px-5 py-3 text-sm font-semibold text-ink transition hover:bg-black/5;
+}
+
+.input {
+  @apply w-full rounded-2xl border border-black/15 bg-white px-4 py-3 outline-none transition focus:border-ember;
+}
+
