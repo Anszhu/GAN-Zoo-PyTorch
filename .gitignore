@@ -1,6 +1,11 @@
 .venv/
 __pycache__/
 .pytest_cache/
+.next/
+node_modules/
+.env
+.env.local
+.DS_Store
 storage/*.jsonl
 storage/*.log
 *.pyc
