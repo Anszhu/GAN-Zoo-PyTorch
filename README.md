@@ -445,6 +445,8 @@ docker compose up --build
 ### Frontend Hosting
 
 - Vercel:
+  - import the same GitHub repo as a monorepo project
+  - set Root Directory to `frontend`
   - set `NEXT_PUBLIC_API_URL`
   - set `NEXT_PUBLIC_WS_URL`
 - Netlify also works if websocket endpoint is external
@@ -496,9 +498,34 @@ npm install
 npm run dev
 ```
 
+## 12. Production Deploy Plan
+
+### Vercel frontend
+
+1. Import [GAN-Zoo-PyTorch](https://github.com/Anszhu/GAN-Zoo-PyTorch) into Vercel.
+2. Set the Root Directory to `frontend`.
+3. Add:
+   - `NEXT_PUBLIC_API_URL=https://<your-render-api>.onrender.com/api/v1`
+   - `NEXT_PUBLIC_WS_URL=wss://<your-render-api>.onrender.com`
+4. Deploy.
+
+### Render backend and worker
+
+1. In Render, create a new Blueprint deployment from the same GitHub repo.
+2. Render will read [`render.yaml`](/C:/Users/HP/Documents/New%20project/render.yaml).
+3. After the first deploy, set these backend values in Render:
+   - `FRONTEND_URL=https://<your-vercel-app>.vercel.app`
+   - `CORS_ORIGINS=["https://<your-vercel-app>.vercel.app"]`
+4. If you need shared persistent media across backend and worker, use S3:
+   - set `AWS_S3_ENABLED=true`
+   - set `AWS_S3_BUCKET`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`
+
+### Important production note
+
+- Render web and worker services do not share the same local filesystem. For production image persistence across services, S3 is the recommended setup.
+
 ## Notes
 
 - The repo defaults to CPU for safety. Set `DEFAULT_DEVICE=cuda` when deploying on a GPU machine.
 - StyleGAN is scaffolded as an integration point, not a bundled heavy checkpoint.
 - The CycleGAN route is inference-ready but expects a trained checkpoint for meaningful output quality.
-
